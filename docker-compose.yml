@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/public
+      - ./app:/var/www/app
+      - ./composer.json:/var/www/composer.json
+      - ./config/php.ini:/usr/local/etc/php/conf.d/php.ini
+    depends_on:
+      - mysql
+  
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: five_team_car_dashboard_db
+      MYSQL_USER: fiveteam
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql 
+
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: fiveteam
+      PMA_PASSWORD: password
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:

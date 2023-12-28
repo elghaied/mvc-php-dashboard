@@ -1,0 +1,14 @@
+{
+    "name": "root/car-project",
+    "authors": [
+        {
+            "name": "eslam"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "5Team\\": "app/"
+        }
+    }
+}
