@@ -11,9 +11,14 @@ services:
       - ./public:/var/www/public
       - ./app:/var/www/app
       - ./composer.json:/var/www/composer.json
-      - ./config/php.ini:/usr/local/etc/php/conf.d/php.ini
+      # - ./config/php.ini:/usr/local/etc/php/conf.d/php.ini
     depends_on:
       - mysql
+    environment:
+      DB_HOST: mysql
+      DB_NAME: five_team_car_dashboard_db
+      DB_USER: fiveteam
+      DB_PASSWORD: password
   
   mysql:
     image: mysql

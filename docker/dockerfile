@@ -6,6 +6,7 @@ RUN apt-get update && \
     apt-get install -y unzip && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+RUN docker-php-ext-install pdo pdo_mysql
 WORKDIR /var/www
 COPY config/vhost.conf /etc/apache2/sites-available/000-default.conf
 RUN a2ensite 000-default.conf && \
@@ -13,5 +14,8 @@ RUN a2ensite 000-default.conf && \
 
 RUN chown -R appuser:appuser /var/www
 USER appuser
+COPY config/monolog.php /var/www/config/monolog.php
+COPY config/routes.php /var/www/config/routes.php
 COPY composer.json /var/www/composer.json
 RUN composer install
+RUN composer dump-autoload --optimize 
