@@ -13,7 +13,7 @@ class CarView
         include __DIR__ . '/../Components/header.php'; 
         $navItems = $this->navItems();
         include __DIR__ . '/../Components/navbar.php';
-        echo '<div class="w-full p-5">';
+        echo '<div class="w-full p-5 h-[calc(100vh-81px)] scroll-smooth overflow-y-scroll">';
         echo $content;
         echo '</div>';
         include __DIR__ . '/../Components/CarFormPopUp.php';
@@ -27,7 +27,7 @@ class CarView
         echo '<div class="car-list-container flex flex-col gap-4">';
         
         // Header row
-        echo '<div class="car-list-item grid grid-cols-8 font-bold uppercase mb-5">';
+        echo '<div class="car-list-item grid grid-cols-8 font-bold uppercase mb-5 sticky top-0">';
         echo '<div>Brand</div>';
         echo '<div>Model</div>';
         echo '<div>License Plate</div>';
@@ -37,7 +37,7 @@ class CarView
         echo '<div>Fuel</div>';
         echo '<div>Actions</div>';
         echo '</div>';
-        echo '<div id="carListContainer" class="car-list-container flex flex-col gap-4">';
+        echo '<div id="carListContainer" class="car-list-container flex flex-col gap-4 ">';
         // Cars rows
         echo CarListComponent::render($cars);
     

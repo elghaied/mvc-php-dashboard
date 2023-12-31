@@ -3,7 +3,7 @@
 return [
     ['GET', '/', 'Fiveteam\Controllers\CarController@showCarList'],
     ['GET', '/add', 'Fiveteam\Controllers\CarController@showCarAddForm'],
- 
+    ['GET', '/initDatabase', 'Fiveteam\Controllers\CarController@initiateCarsDatabase'],
 
     ['POST', '/api/add', 'Fiveteam\Controllers\CarApiController@addCar'],
 

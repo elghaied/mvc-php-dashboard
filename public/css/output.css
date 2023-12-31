@@ -552,12 +552,20 @@ video {
   position: fixed;
 }
 
+.sticky {
+  position: sticky;
+}
+
 .left-1\/2 {
   left: 50%;
 }
 
 .top-1\/2 {
   top: 50%;
+}
+
+.top-0 {
+  top: 0px;
 }
 
 .mb-5 {
@@ -680,6 +688,14 @@ video {
 
 .gap-4 {
   gap: 1rem;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
+}
+
+.scroll-smooth {
+  scroll-behavior: smooth;
 }
 
 .rounded {
