@@ -15,17 +15,17 @@ This project is a CRUD dashboard built using the MVC architecture, PHP 8, and se
 
 1. **Clone the repository:**
 
-   ```bash
-   git clone https://github.com/your-username/your-project.git
+    ```bash
+    git clone https://github.com/elghaied/mvc-php-dashboard.git
 
 
 2. **Build and start Docker containers:**
-```bash
-docker-compose up -d
-```
+    ```bash
+    docker-compose up -d
+
 
 3. **Initialize the Cars Database with fake data:**
 
-```bash
-http://localhost:8080/initDatabase
-```
+    ```bash
+    http://localhost:8080/initDatabase
+
