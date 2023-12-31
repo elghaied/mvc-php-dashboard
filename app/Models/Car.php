@@ -96,12 +96,14 @@ class Car
        if (!is_string($licensePlate)) {
             throw new \InvalidArgumentException('Expected string for license plate');
         }
-        $licensePlate = strtoupper(str_replace(' ', '', $licensePlate));
+        $licensePlate = strtoupper(str_replace('-', '', $licensePlate));
 
+       
         //  The format allows two letters, followed by three digits, and ending with two letters.
         if (!preg_match('/^[A-Z]{2}\d{3}[A-Z]{2}$|^[A-Z]{2}-\d{3}-[A-Z]{2}$/', $licensePlate)) {
             throw new \InvalidArgumentException('Invalid license plate format');
         }
+        $licensePlate = substr($licensePlate, 0, 2) . '-' . substr($licensePlate, 2, 3) . '-' . substr($licensePlate, 5);
         $this->licensePlate = $licensePlate;
     }
     public function setPrice(float $price): void

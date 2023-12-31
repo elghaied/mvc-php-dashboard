@@ -11,8 +11,8 @@ class NotificationUtil
             'message' => $message,
         ];
 
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        // header('Content-Type: application/json');
+        // echo json_encode($response);
         exit;
     }
 
@@ -23,8 +23,8 @@ class NotificationUtil
             'message' => $message,
         ];
     
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        // header('Content-Type: application/json');
+        // echo json_encode($response);
         exit;
     }
     

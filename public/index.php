@@ -32,11 +32,11 @@ switch ($routeInfo[0]) {
         echo '405 Method Not Allowed';
         break;
     case FastRoute\Dispatcher::FOUND:
-   
-        [$controller, $method] = explode('@', $routeInfo[1]);
 
+
+        [$controller, $method] = explode('@', $routeInfo[1]);
+        $vars = $routeInfo[2];
         $controllerClass = new $controller;
-     
-        $controllerClass->$method();
+        call_user_func_array([$controllerClass, $method], $vars);
         break;
 }

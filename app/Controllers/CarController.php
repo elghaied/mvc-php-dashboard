@@ -25,7 +25,7 @@ class CarController
         try {
             $cars = $this->carModel->getAllCars();
             $this->carView->renderCarList($cars);
-            // echo json_encode(['cars' => $cars]);
+       
         } catch (CarException $e) {
          
             NotificationUtil::sendError($e->getMessage());
@@ -35,8 +35,8 @@ class CarController
     public function showCarAddForm(): void
     {
         try {
-            $car = $this->carModel->getCarFormData();
-            $this->carView->renderCarAddForm($car);
+           
+            $this->carView->renderCarAddForm();
         } catch (CarException $e) {
          
             NotificationUtil::sendError($e->getMessage());
@@ -49,51 +49,18 @@ class CarController
             $carData = [
                 'brand' => $_POST['brand'] ?? '',
                 'model' => $_POST['model'] ?? '',
-                'licensePlate' => $_POST['licensePlate'] ?? '',
+                'license_plate' => $_POST['license_plate'] ?? '',
                 'price' => $_POST['price'] ?? 0,
-                'saleType' => $_POST['saleType'] ?? '',
-                'isReserved' => isset($_POST['isReserved']),
+                'sale_type' => $_POST['sale_type'] ?? '',
+                'reserved' => isset($_POST['reserved']),
                 'fuel' => $_POST['fuel'] ?? '',
             ];
             $this->carModel->addCar($carData);
-            NotificationUtil::sendSuccess('Car added successfully');
-            header('Location: /');
-            exit();
           
         } catch (CarException $e) {
     
             NotificationUtil::sendError($e->getMessage());
         }
     }
-
-    public function updateCar(int $carId, array $carData): void
-    {
-        try {
-            $this->carModel->updateCar($carId, $carData);
-     
-            NotificationUtil::sendSuccess('Car updated successfully');
-        } catch (CarNotFoundException $e) {
-          
-            NotificationUtil::sendError('Car not found');
-        } catch (CarException $e) {
-         
-            NotificationUtil::sendError($e->getMessage());
-        }
-    }
-
-    public function deleteCar(int $carId): void
-    {
-        try {
-            $this->carModel->deleteCar($carId);
-         
-            NotificationUtil::sendSuccess('Car deleted successfully');
-        } catch (CarNotFoundException $e) {
-           
-            NotificationUtil::sendError('Car not found');
-        } catch (CarException $e) {
-      
-            NotificationUtil::sendError($e->getMessage());
-        }
-    }
-  
+ 
 }

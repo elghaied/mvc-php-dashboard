@@ -30,7 +30,7 @@ class CarModel
             $cars = [];
 
             foreach ($result as $data) {
-                $cars[] = $this->createCarFromData($data);
+                $cars[] = $this->createCarObject($data);
             }
 
             return $cars;
@@ -43,7 +43,7 @@ class CarModel
 
 
 
-    public function getCarById(int $carId): ?Car
+    public function getCarById(int $carId): array
     {
         try {
             $query = "SELECT * FROM cars WHERE id = :id";
@@ -52,12 +52,11 @@ class CarModel
             $statement->execute();
 
             $data = $statement->fetch(\PDO::FETCH_ASSOC);
-
+            
             if (!$data) {
                 throw new CarNotFoundException('Car not found', 404);
             }
-
-            return $this->createCarFromData($data);
+            return $data;
         } catch (\PDOException $e) {
 
             $this->logger->error('Database error: ' . $e->getMessage());
@@ -69,20 +68,21 @@ class CarModel
     public function addCar(array $carData): void
     {
         try {
-            $this->validateCarData($carData);
+            $car = $this->validateCarData($carData);
+           
 
             $query = "INSERT INTO cars (brand, model, license_plate, price, sale_type, reserved, fuel)
-                      VALUES (:brand, :model, :licensePlate, :price, :saleType, :isReserved, :fuel)";
+                      VALUES (:brand, :model, :license_plate, :price, :sale_type, :reserved, :fuel)";
 
             $statement = $this->db->getConnection()->prepare($query);
 
-            $statement->bindParam(':brand', $carData['brand']);
-            $statement->bindParam(':model', $carData['model']);
-            $statement->bindParam(':licensePlate', $carData['licensePlate']);
-            $statement->bindParam(':price', $carData['price']);
-            $statement->bindParam(':saleType', $carData['saleType']);
-            $statement->bindParam(':isReserved', $carData['isReserved'], \PDO::PARAM_BOOL);
-            $statement->bindParam(':fuel', $carData['fuel']);
+            $statement->bindValue(':brand', $car->getBrand());
+            $statement->bindValue(':model', $car->getModel());
+            $statement->bindValue(':license_plate', $car->getLicensePlate());
+            $statement->bindValue(':price', $car->getPrice());
+            $statement->bindValue(':sale_type', $car->getSaleType());
+            $statement->bindValue(':reserved', $car->getIsReserved(), \PDO::PARAM_BOOL);
+            $statement->bindValue(':fuel', $car->getFuel());
             $statement->execute();
         } catch (\InvalidArgumentException $e) {
             $this->logger->error('Validation error: ' . $e->getMessage());
@@ -109,18 +109,18 @@ class CarModel
 
             $this->validateCarData($updatedCarData);
 
-            $query = "UPDATE cars SET brand = :brand, model = :model, license_plate = :licensePlate, 
-                      price = :price, sale_type = :saleType, reserved = :isReserved, fuel = :fuel
+            $query = "UPDATE cars SET brand = :brand, model = :model, license_plate = :license_plate, 
+                      price = :price, sale_type = :sale_type, reserved = :reserved, fuel = :fuel
                       WHERE id = :carId";
 
             $statement = $this->db->getConnection()->prepare($query);
 
             $statement->bindParam(':brand', $updatedCarData['brand']);
             $statement->bindParam(':model', $updatedCarData['model']);
-            $statement->bindParam(':licensePlate', $updatedCarData['licensePlate']);
+            $statement->bindParam(':license_plate', $updatedCarData['license_plate']);
             $statement->bindParam(':price', $updatedCarData['price']);
-            $statement->bindParam(':saleType', $updatedCarData['saleType']);
-            $statement->bindParam(':isReserved', $updatedCarData['isReserved'], \PDO::PARAM_BOOL);
+            $statement->bindParam(':sale_type', $updatedCarData['sale_type']);
+            $statement->bindParam(':reserved', $updatedCarData['reserved'], \PDO::PARAM_BOOL);
             $statement->bindParam(':fuel', $updatedCarData['fuel']);
             $statement->bindParam(':carId', $carId, \PDO::PARAM_INT);
 
@@ -139,7 +139,7 @@ class CarModel
     }
 
 
-    public function deleteCar(int $carId): void
+    public function deleteCar(int $carId = NULL): void
     {
         try {
 
@@ -159,22 +159,32 @@ class CarModel
     }
 
     // Private methods
-    private function createCarFromData(array $data): Car
+    private function createCarObject(array $data): Car
     {
         $car = new Car();
-        $car->setId($data['id']);
-        $car->setBrand($data['brand']);
-        $car->setModel($data['model']);
-        $car->setLicensePlate($data['license_plate']);
-        $car->setPrice($data['price']);
-        $car->setSaleType($data['sale_type']);
-        $car->setIsReserved((bool) $data['reserved']);
-        $car->setFuel($data['fuel']);
 
+        try {
+            $car->setId($data['id'] ?? 0);
+            $car->setBrand($data['brand']);
+            $car->setModel($data['model']);
+            $car->setLicensePlate($data['license_plate']);
+            $car->setPrice($data['price']);
+            $car->setSaleType($data['sale_type']);
+            $car->setIsReserved((bool) $data['reserved']);
+            $car->setFuel($data['fuel']);
+        } catch (CarException $e) {
+            $this->logger->error('Error creating Car object: ' . $e->getMessage());
+      
+            throw $e;
+        }
+    
+        $this->logger->info('Created car object', ['car' => $data]);
+    
         return $car;
     }
-    private function validateCarData(array $carData): void
+    private function validateCarData(array $carData): Car
     {
+       
         if (empty($carData['brand']) || !is_string($carData['brand'])) {
             throw new \InvalidArgumentException('Invalid or missing brand');
         }
@@ -183,7 +193,7 @@ class CarModel
             throw new \InvalidArgumentException('Invalid or missing model');
         }
 
-        if (empty($carData['licensePlate']) || !is_string($carData['licensePlate'])) {
+        if (empty($carData['license_plate']) || !is_string($carData['license_plate'])) {
             throw new \InvalidArgumentException('Invalid or missing license plate');
         }
 
@@ -191,11 +201,11 @@ class CarModel
             throw new \InvalidArgumentException('Invalid price');
         }
 
-        if (!in_array($carData['saleType'], ['used', 'new'])) {
+        if (!in_array($carData['sale_type'], ['used', 'new'])) {
             throw new \InvalidArgumentException('Invalid sale type');
         }
 
-        if (!is_bool($carData['isReserved'])) {
+        if (!is_bool($carData['reserved'])) {
             throw new \InvalidArgumentException('Invalid isReserved');
         }
 
@@ -203,18 +213,12 @@ class CarModel
             throw new \InvalidArgumentException('Invalid fuel type');
         }
 
+        $car = $this->createCarObject($carData);
 
+
+        
+        return $car;
+       
     }
-    public function getCarFormData(): array
-    {
-        return [
-            'brand' => '',
-            'model' => '',
-            'licensePlate' => '',
-            'price' => '',
-            'saleType' => Car::getAllowedSaleTypes(),
-            'isReserved' => false,
-            'fuel' => Car::getAllowedFuelTypes(),
-        ];
-    }
+
 }

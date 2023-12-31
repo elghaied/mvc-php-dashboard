@@ -6,7 +6,7 @@
 <div class="main flex ">
 
 
-<div class=" w-1/3 bg-black h-[calc(100vh-81px)] text-white flex flex-col p-5 gap-3">
+<div class=" w-full max-w-56 bg-black h-[calc(100vh-81px)] text-white flex flex-col p-5 gap-3">
 
 <?php
 

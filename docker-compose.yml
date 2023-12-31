@@ -11,6 +11,7 @@ services:
       - ./public:/var/www/public
       - ./app:/var/www/app
       - ./composer.json:/var/www/composer.json
+      - ./config/routes.php:/var/www/config/routes.php
       # - ./config/php.ini:/usr/local/etc/php/conf.d/php.ini
     depends_on:
       - mysql
